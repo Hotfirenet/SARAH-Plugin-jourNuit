@@ -1,0 +1,11 @@
+.jourNuit
+{
+	text-align: center;
+	min-height: 128px;
+}
+
+.jourNuit img
+{
+	height: 110px;
+	width: 110px;
+}

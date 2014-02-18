@@ -1,0 +1,19 @@
+{
+	"modules": { 
+		"jourNuit": {
+			"description": "Indique à SARAH si nous sommes en mode jour ou en mode nuit",
+			"version": "1.0",
+			"heureDuJour":"07:00",
+			"heureDeLaNuit":"22:00"
+		}
+	},
+  
+  "cron" : {
+    "jourNuit" :   { 
+      "name"       : "jourNuit",
+      "description": "Job qui vérifie si nous sommes en mode jour ou en mode nuit",
+      "time"       : "0 0 * * * *"
+    }
+  }
+}
+

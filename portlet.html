@@ -1,0 +1,8 @@
+<% stylesheet('assets/'+key+'/portlet.css') %>
+<% 
+  var jourNuitPortlet = SARAH.ConfigManager.getModule(key); 
+  var etat  = jourNuitPortlet.getJourNuit(SARAH); 
+%>
+
+<h3 class="default"><%= key %> <%= module.version %></h3>
+<p class="overflow jourNuit"><a href="sarah/jourNuit" class="ajax"><img src="assets/jourNuit/images/<%= etat %>.png"></a></p>
