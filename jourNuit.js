@@ -1,21 +1,76 @@
-var debug = false;
+var jn_debug = false;
 
-exports.action = function(data, callback, config, SARAH){
-	var strJourNuit = '';
-	var jourOuNuit = SARAH.ConfigManager.getModule('jourNuit');
+var jn_heureDuJour = '';
+var jn_heureDeLaNuit = '';
+var jn_flag = false;
+
+exports.init = function (SARAH)
+{	
+	SARAH.context.jourNuit = {};
 		
-	if(jourOuNuit.jourNuit == 'jour')
+	var config = SARAH.ConfigManager.getConfig();
+	config = config.modules.jourNuit;  
+	
+	jourOuNuit(config.heureDuJour, config.heureDeLaNuit, function(status){
+		SARAH.context.jourNuit.status = status;
+	});
+	
+	jn_heureDuJour = config.heureDuJour;
+	jn_heureDeLaNuit = config.heureDeLaNuit;
+	
+}
+
+exports.action = function(data, callback, config, SARAH)
+{
+	
+	if(jn_debug)
+		console.log('01 - action - value context: ' + SARAH.context.jourNuit.status);
+	
+	if(SARAH.context.jourNuit.status == 'jour')
 		strJourNuit = 'le jour.';
 	else
 		strJourNuit = 'la nuit.';
 	
+	if(jn_debug)
+		console.log('02 - ' + strJourNuit);
+	
 	var text = 'nous sommes ' + strJourNuit;
 	
-	callback({'tts': text});
+	if(jn_debug)
+		console.log('03 - ' + text);	
+		
+	switch(data.jourNuitAction)
+	{
+		case 'setJourNuit':
+			setJourOuNuit(data.status, function(cb){
+				callback({'tts' : cb});
+			});
+			break;
+			
+		default:
+			callback({'tts' : 'Action inconnu'});
+			break;
+	}
 }
 
-exports.cron = function(callback, task, SARAH){
-	var config = SARAH.ConfigManager.getConfig().modules.jourNuit;
+exports.cron = function(callback, task, SARAH)
+{
+	jourOuNuit(jn_heureDuJour, jn_heureDeLaNuit, function(status){
+		SARAH.context.jourNuit.status = status;
+	});
+}
+
+exports.getJourNuit = function(SARAH){ 
+	var data = SARAH.context.jourNuit.status;
+	
+	if(jn_debug)
+		console.log('getJourNuit: ' + data);
+		
+	return data; 
+}
+
+var jourOuNuit = function(jn_config_heureDuJour, jn_config_heureDeLaNuit, cb)
+{
 	var jourNuit = '';
 	
 	var month=new Array();
@@ -35,10 +90,10 @@ exports.cron = function(callback, task, SARAH){
 	var date = new Date();
 	var today = date.getFullYear() +'-'+ month[date.getMonth()] +'-'+ date.getDate();	
 	
-	var monHeureDuJour= new Date(today +' '+ config.heureDuJour);
-	var monHeureDeLaNuit = new Date(today +' '+config.heureDeLaNuit);
+	var monHeureDuJour= new Date(today +' '+ jn_config_heureDuJour);
+	var monHeureDeLaNuit = new Date(today +' '+ jn_config_heureDeLaNuit);
 
-	if(debug)
+	if(jn_debug)
 	{
 		console.log(date);
 		console.log(today);
@@ -51,20 +106,38 @@ exports.cron = function(callback, task, SARAH){
 	else
 		jourNuit = 'nuit';		
 		
-	if(debug)	
+	if(jn_debug)	
 		console.log('cron: ' + jourNuit);
 	
-	exports.jourNuit = jourNuit;
-	
-	callback({});
+	cb(jourNuit);
+	return;
 }
 
-exports.getJourNuit = function(SARAH){ 
-	var getJourNuitPortlet = SARAH.ConfigManager.getModule('jourNuit');
-	var data = getJourNuitPortlet.jourNuit;
-	
-	if(debug)
-		console.log('getJourNuit: ' + data);
+var setJourOuNuit = function(level, cb)
+{
+	if(level)
+	{	
+		var msg = '';
+		switch(level)
+		{
+			case 'jour':
+				msg = 'jour';
+				break;		
+				
+			case 'nuit':
+				msg = 'nuit';
+				break;
+				
+			default:
+				msg = 'Erreur le level doit etre jour ou nuit !';
+				break;				
+		}
 		
-	return data; 
+		cb(msg);
+		return;				
+	} 
+	else
+	{
+		
+	}
 }
