@@ -1,8 +1,8 @@
-var jn_debug = false;
+var JNDebug = true;
 
-var jn_heureDuJour = '';
-var jn_heureDeLaNuit = '';
-var jn_flag = false;
+var JNHeureDuJour = '';
+var JNHeureDeLaNuit = '';
+var JNSetFlag = false;
 
 exports.init = function (SARAH)
 {	
@@ -11,40 +11,40 @@ exports.init = function (SARAH)
 	var config = SARAH.ConfigManager.getConfig();
 	config = config.modules.jourNuit;  
 	
-	jourOuNuit(config.heureDuJour, config.heureDeLaNuit, function(status){
+	jourOuNuit(config.heureDuJour, config.heureDeLaNuit, '', function(status){
 		SARAH.context.jourNuit.status = status;
 	});
 	
-	jn_heureDuJour = config.heureDuJour;
-	jn_heureDeLaNuit = config.heureDeLaNuit;
-	
+	JNHeureDuJour = config.heureDuJour;
+	JNHeureDeLaNuit = config.heureDeLaNuit;	
 }
 
 exports.action = function(data, callback, config, SARAH)
-{
-	
-	if(jn_debug)
+{	
+	if(JNDebug)
 		console.log('01 - action - value context: ' + SARAH.context.jourNuit.status);
 	
-	if(SARAH.context.jourNuit.status == 'jour')
-		strJourNuit = 'le jour.';
-	else
-		strJourNuit = 'la nuit.';
+	var text = 'nous sommes en mode ' + SARAH.context.jourNuit.status;
 	
-	if(jn_debug)
-		console.log('02 - ' + strJourNuit);
-	
-	var text = 'nous sommes ' + strJourNuit;
-	
-	if(jn_debug)
+	if(JNDebug)
+	{
 		console.log('03 - ' + text);	
+		console.log('04 - ' + data.jourNuitAction);
+		console.log('05 - ' + data.status);
+		console.log('06 - ' + JNSetFlag);		
+	}
 		
 	switch(data.jourNuitAction)
 	{
 		case 'setJourNuit':
 			setJourOuNuit(data.status, function(cb){
+				SARAH.context.jourNuit.status = cb;
 				callback({'tts' : cb});
 			});
+			break;
+			
+		case 'getJourNuit':
+			callback({'tts' : SARAH.context.jourNuit.status});
 			break;
 			
 		default:
@@ -55,7 +55,7 @@ exports.action = function(data, callback, config, SARAH)
 
 exports.cron = function(callback, task, SARAH)
 {
-	jourOuNuit(jn_heureDuJour, jn_heureDeLaNuit, function(status){
+	jourOuNuit(JNHeureDuJour, JNHeureDeLaNuit, SARAH.context.jourNuit.status, function(status){
 		SARAH.context.jourNuit.status = status;
 	});
 }
@@ -63,13 +63,13 @@ exports.cron = function(callback, task, SARAH)
 exports.getJourNuit = function(SARAH){ 
 	var data = SARAH.context.jourNuit.status;
 	
-	if(jn_debug)
+	if(JNDebug)
 		console.log('getJourNuit: ' + data);
 		
 	return data; 
 }
 
-var jourOuNuit = function(jn_config_heureDuJour, jn_config_heureDeLaNuit, cb)
+var jourOuNuit = function(JNHeureDuJour, JNHeureDeLaNuit, status, cb)
 {
 	var jourNuit = '';
 	
@@ -90,10 +90,10 @@ var jourOuNuit = function(jn_config_heureDuJour, jn_config_heureDeLaNuit, cb)
 	var date = new Date();
 	var today = date.getFullYear() +'-'+ month[date.getMonth()] +'-'+ date.getDate();	
 	
-	var monHeureDuJour= new Date(today +' '+ jn_config_heureDuJour);
-	var monHeureDeLaNuit = new Date(today +' '+ jn_config_heureDeLaNuit);
+	var monHeureDuJour= new Date(today +' '+ JNHeureDuJour);
+	var monHeureDeLaNuit = new Date(today +' '+ JNHeureDeLaNuit);
 
-	if(jn_debug)
+	if(JNDebug)
 	{
 		console.log(date);
 		console.log(today);
@@ -102,11 +102,21 @@ var jourOuNuit = function(jn_config_heureDuJour, jn_config_heureDeLaNuit, cb)
 	}
 
 	if(date > monHeureDuJour  && date < monHeureDeLaNuit)
-		jourNuit = 'jour';
+	{
+		if(!JNSetFlag)
+			jourNuit = 'jour';
+		else
+			jourNuit = status;		
+	}
 	else
-		jourNuit = 'nuit';		
+	{
+		if(!JNSetFlag)
+			jourNuit = 'nuit';
+		else
+			jourNuit = status;		
+	}
 		
-	if(jn_debug)	
+	if(JNDebug)	
 		console.log('cron: ' + jourNuit);
 	
 	cb(jourNuit);
@@ -115,29 +125,43 @@ var jourOuNuit = function(jn_config_heureDuJour, jn_config_heureDeLaNuit, cb)
 
 var setJourOuNuit = function(level, cb)
 {
+	if(JNDebug)	
+		console.log('05 - ' + level);		
+		
 	if(level)
 	{	
-		var msg = '';
+		var JNReturn = '';
 		switch(level)
 		{
 			case 'jour':
-				msg = 'jour';
+				JNReturn = 'jour';
+				JNSetFlag = true;
 				break;		
 				
 			case 'nuit':
-				msg = 'nuit';
+				JNReturn = 'nuit';
+				JNSetFlag = true;
+				break;
+				
+			case 'normal':
+				if(JNSetFlag)
+				{
+					JNSetFlag = false;
+					jourOuNuit(JNHeureDuJour, JNHeureDeLaNuit, '', function(status){
+						JNReturn = status;
+					});				
+				}
+				else
+					JNReturn = 'Le système est déjà en mode normal !';
+					
 				break;
 				
 			default:
-				msg = 'Erreur le level doit etre jour ou nuit !';
+				JNReturn = 'Erreur le level doit etre jour, nuit ou normal !';
 				break;				
 		}
 		
-		cb(msg);
+		cb(JNReturn);
 		return;				
 	} 
-	else
-	{
-		
-	}
 }
