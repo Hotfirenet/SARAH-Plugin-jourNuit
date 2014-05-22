@@ -47,6 +47,15 @@ exports.action = function(data, callback, config, SARAH)
 			callback({'tts' : SARAH.context.jourNuit.status});
 			break;
 			
+		case 'getMode':
+			if(JNSetFlag)
+				var modeEnCours = 'manuel'
+			else
+				var modeEnCours = 'normal'
+		
+			callback({'tts' : modeEnCours});
+			break;			
+			
 		default:
 			callback({'tts' : 'Action inconnu'});
 			break;
