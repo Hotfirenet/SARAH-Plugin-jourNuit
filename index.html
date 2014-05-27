@@ -1,91 +1,14 @@
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#plugin-menu .plugin-nav a").click(function () {
-            jQuery("#plugin-menu .content > ul").hide();
-            jQuery("#plugin-menu .plugin-nav ul li").removeClass("active");
-            jQuery(this).parent().addClass("active");
-            jQuery("#" + jQuery(this).data("toggle")).show();
-            return false;
-        });
-    });
-</script>
-<p class="page-header">
-	<span class="lead">Ce plugin permet d'indiquer suivant vos horaires si SARAH est en mode Jour ou Nuit</span></br></br>		
+<div class="row">
+<p>Le plugin jour nuit pour SARAH vous permet de d&eacute;finir un mode jour et un mode nuit en fonction des horaires que vous lui aurait param&eacute;tr&eacute;e.</p>
+<p>Le changement de mode est automatique, il est r&eacute;alis&eacute; par le cron que vous pourrez configurer.</p>
+<p>L’id&eacute;e est de chainer des plugins pour arriver à des exemples tels que:
+<ul>
+    <li>Si nous sommes en mode jour alors certaines prises ne seront pas aliment&eacute;s,</li>
+    <li>Si nous sommes en mode nuit je d&eacute;sactive le carillon de la sonnette,</li>
+    <li>ou encore si des que le mode nuit passe j’active l’alarme ...</li>
+</ul>
 </p>
-
-<div id="plugin-menu" class="row">
-    <!--Navigation-->
-    <div class="stretch col-md-3 well plugin-nav">
-        <ul class="nav nav-list">
-            <li class="nav-header">Configuration</li>
-            <li class="#"><a href="" data-toggle="plugin-config-jn">du plugin</a></li>
-			<li class="nav-header">Compl&eacute;ment d'informations</li>
-            <li class="#"><a href="" data-toggle="plugin-concepteur-jn">le concepteur</a></li>		
-		</ul>
-	</div>
-	<!--Content-->
-	<div class="col-md-9 content">
-		<!--Version-->
-		<ul class="unstyled" id="plugin-version-jourNuit">
-			<div class="alert alert-success">Versions</div>
-			<li><i class="icon-play-circle"></i> Version 1.0:</br>
-			<input type="checkbox" checked /> Sortie du plugin.</br>
-			</li>
-			<li><i class="icon-play-circle"></i>A venir dans la version 1.1:</br>
-			<input type="checkbox" /> Ajout d'une m&eacute;thode qui permet de passer en mode nuit en pleine journ&e</br>
-			<input type="checkbox" /> Ajout d'une m&eacute;thode </br>
-			</li>		
-		</ul>
-        <!--Config jourNuit-->		
-		<ul class="unstyled" id="plugin-config-jn" style="display: none;">
-			<div class="alert alert-success">Configuration - jourNuit</div>
-			<div align="center"><a href="" data-target="#image-jn" data-toggle="modal" href="#"><img src="assets/jourNuit/images/jourNuitConfig.png" width="40%" height="40%" /></a></div>
-			<li>1 - Retourner le portlet</li>
-			<li>2 - cliquer sur la cl&eacute;</li>
-			<li>3 - Renseigner les horaires:
-				<ul>
-					<li>Si pour vous le mode journcommence &agrave; 7h, veuillez saisir 07:00</li>
-					<li>Si pour vous le mode nuit commence &agrave; 21h veuillez saisir 21:00</li>
-					<li>Il vous est possible de mettre par exemple 19:30, si c'est le cas il vous faut changer le cron</li>
-				</ul>
-			</li><br />
-			<li>Le cron: (source: <a href="" title="" target="_blank">wikipedia</a>)<br />
-			<blockquote>cron est un programme qui permet aux utilisateurs des syst&egrave;mes Unix d'ex&eacute;cuter automatiquement des scripts, des commandes ou des logiciels &agrave; une date et une heure sp&eacute;cifi&eacute;es &agrave; l'avance, ou selon un cycle d&eacute;fini &agrave; l'avance.<br />
-						 Le nom est d&eacute;riv&eacute; du grec chronos , signifiant le temps1,2.<br />
-						 Il s'agit d'une fonctionnalit&eacute; tr&egrave;s utile pour des taches routini&egrave;res d'administration syst&egrave;me, mais elle peut tr&egrave;s bien &ecirc;tre exploit&eacute;e pour tout autre chose. Par exemple, on peut demander &agrave; cron de jouer tel fichier ogg tous les jours &agrave; sept heures sauf le samedi et le dimanche afin de se r&eacute;veiller en musique.<br />
-						 cron est un service (daemon), ce qui - dans le jargon informatique - d&eacute;signe un programme qu'on ne lance qu'une seule fois apr&egrave;s le d&eacute;marrage de l'ordinateur et qui reste en tache de fond en attendant qu'on ait besoin de lui. Le service cron (crond) attend ainsi jusqu'au moment sp&eacute;cifi&eacute; dans le fichier de configuration (que l'on appelle la crontab) puis effectue l'action correspondante et se rendort jusqu'&agrave; l'&eacute;v&eacute;nement suivant.<blockquote></li>
-				
-			<li>Exemple de cron pour node.js
-				<ul>
-					<li>Toute les 4 heures: <strong>0 0 4 * * *</strong></li>
-					<li>Toute les heures: <strong>0 0 * * * *</strong></li>
-					<li>Toute les 30 minutes: <strong>0 */30 * * * *</strong></li>
-					<li>Toute les 15 minutes: <strong>0 */15 * * * *</strong></li>
-				</ul><br />
-				<img src="assets/jourNuit/images/jourNuitConfigCron.png" width="95%" height="95%" />
-			</li>
-		</ul>
-        <!--concepteur jourNuit-->		
-		<ul class="unstyled" id="plugin-concepteur-jn" style="display: none;">
-			<p>Ce plugin est d&eacute;velopp&eacute; par <a href="http://blog.hotfirenet.com" target="_blank">Hotfirenet</a>.</p><p>Pour une demande d'ajout de fonctionnalit&eacute; c'est <a href="http://blog.hotfirenet.com/plugin-jour-nuit-pour-sarah/" target="_blank">par ici</a>.</p>
-		</ul>
-	</div>	
-</div>
-<div id="image-jn" class="modal fade" style="display: none;" aria-hidden="true">
-
-    <div class="modal-content">
-
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3>Configuration jourNuit</h3>
-  </div>
-  <div class="modal-body">
-    <img src="assets/jourNuit/images/jourNuitConfig.png" width="85%" height="85%" />
-  </div>
-  <div class="modal-footer">    
-    <a href="#" class="btn btn-default" data-dismiss="modal">Fermer</a>
-  </div>
-  </form>
-  
-    </div> 
+<p>Pour plus d'informations sur la configuration et l'utilisation, je vous invite &agrave; venir lire <a href="http://blog.hotfirenet.com/sarah/plugin-jour-nuit-pour-sarah/" target="_blank">la documentation sur la page du plugin</a>.</p>
+<p>Vous pouvez utiliser les commentaires pour une demande d'&eacute;volution.<br />
+<strong>Pour tout bug merci <a href="https://github.com/Hotfirenet/SARAH-Plugin-jourNuit/issues" target="_blank">d'utiliser l'utilitaire de GitHub</a></strong></p>
 </div>
