@@ -1,0 +1,16 @@
+<grammar version="1.0" xml:lang="fr-FR" mode="voice" root="ruleJourNuit" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
+    <rule id="ruleJourNuit" scope="public">
+        <example>Sarah passe en mode jour</example>
+        <tag>out.action=new Object(); </tag>
+        <item weight="2">Sarah</item>
+        <one-of>
+            <item>Active le mode jour<tag>out.action.jourNuitAction = "setJourNuit"; out.action.status = "jour";</tag></item>
+			<item>Active le mode nuit<tag>out.action.jourNuitAction = "setJourNuit";  out.action.status = "nuit";</tag></item> 
+			<item>mode normal<tag>out.action.jourNuitAction = "setJourNuit";  out.action.status = "normal";</tag></item>
+			<item>Couche toi<tag>out.action.jourNuitAction = "setJourNuit";  out.action.status = "nuit";</tag></item>  
+			<item>Réveil toi<tag>out.action.jourNuitAction = "setJourNuit";  out.action.status = "jour";</tag></item> 
+			<item>dans quel mode es tu ?<tag>out.action.jourNuitAction = "getMode";</tag></item>
+        </one-of>
+        <tag>out.action._attributes.uri="http://127.0.0.1:8080/sarah/journuit";</tag>
+    </rule>
+</grammar>

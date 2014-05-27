@@ -35,7 +35,10 @@ on top of:
 
 ## Description
 
-Ce plugin permet de mettre en veille votre pc.
+Ce plugin permet d'avoir un mode jour et nuit au sein de SARAH.
+il se met automatiquement en fionction d'un horaire.
+vous pouvez passer manuellement ou vocalement en mode jour ou nuit.
+Mise a disposition dans le context de la valeur du mode en cours.
 
 
 ## Quick Start
